@@ -97,8 +97,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         long expiration = 30 * 60 * 1000;
         if (user == null || !user.getVerifyCode().equals(code))
             return "verify_fail";
-        long createMilitime = Timestamp.valueOf(user.getUpdatedAt()).getTime();
-        if (System.currentTimeMillis() - createMilitime > expiration) {
+        long updateMilitime = Timestamp.valueOf(user.getUpdatedAt()).getTime();
+        if (System.currentTimeMillis() - updateMilitime > expiration) {
             user.setVerifyCode(generateRandomVerifyCode());
             user.setUserStatus(EUserStatus.INACTIVE);
             userRepository.save(user);

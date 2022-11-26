@@ -25,8 +25,6 @@ public class User extends BaseEntity {
     private String email;
     @Column(name = "name")
     private String name;
-    @Column(name = "phone_number")
-    private String phoneNumber;
     @Column(name = "verify_code", length = 64)
     private String verifyCode;
     @Column(name = "user_status")
@@ -35,10 +33,17 @@ public class User extends BaseEntity {
     @Column(name = "image_url")
     private String imageUrl;
     private String role;
+
     @JsonIgnore
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Cart cart;
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Collection<Bill> bills;
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Collection<Address> addresses;
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Collection<PhoneNumber> phoneNumbers;
 }

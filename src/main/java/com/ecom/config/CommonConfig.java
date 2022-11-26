@@ -6,6 +6,7 @@ import com.ecom.util.HashingAlgorithm;
 import com.ecom.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,5 +47,10 @@ public class CommonConfig {
     @Bean
     JwtUtil jwtUtil(@Value("${jwt.secret}") String key) {
         return new JwtUtil(hashingAlgorithm.hashingAlorithm(key, algorithmName));
+    }
+
+    @Bean
+    ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }
