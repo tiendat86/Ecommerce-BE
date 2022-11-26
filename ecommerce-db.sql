@@ -18,6 +18,39 @@ USE `ecom`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `address`
+--
+
+DROP TABLE IF EXISTS `address`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `address` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `country` varchar(255) DEFAULT NULL,
+  `detail` varchar(255) DEFAULT NULL,
+  `district` varchar(255) DEFAULT NULL,
+  `province` varchar(255) DEFAULT NULL,
+  `ward` varchar(255) DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKda8tuywtf0gb6sedwk7la1pgi` (`user_id`),
+  CONSTRAINT `FKda8tuywtf0gb6sedwk7la1pgi` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `address`
+--
+
+LOCK TABLES `address` WRITE;
+/*!40000 ALTER TABLE `address` DISABLE KEYS */;
+INSERT INTO `address` VALUES (1,'2022-11-26 02:16:07','2022-11-26 02:16:07','Việt Nam','143 Cầu Láng','Thanh Xuân','Hà Nội','Mỹ Đình',2);
+/*!40000 ALTER TABLE `address` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `bill`
 --
 
@@ -99,6 +132,36 @@ LOCK TABLES `cart` WRITE;
 /*!40000 ALTER TABLE `cart` DISABLE KEYS */;
 INSERT INTO `cart` VALUES (1,NULL,NULL,1),(2,NULL,NULL,2),(3,NULL,NULL,3);
 /*!40000 ALTER TABLE `cart` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `phone_number`
+--
+
+DROP TABLE IF EXISTS `phone_number`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `phone_number` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `phone_status` varchar(255) DEFAULT NULL,
+  `verify_code` varchar(6) DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKb609grkur7fch5if2c0nrcujh` (`user_id`),
+  CONSTRAINT `FKb609grkur7fch5if2c0nrcujh` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `phone_number`
+--
+
+LOCK TABLES `phone_number` WRITE;
+/*!40000 ALTER TABLE `phone_number` DISABLE KEYS */;
+/*!40000 ALTER TABLE `phone_number` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -189,7 +252,6 @@ CREATE TABLE `user` (
   `user_status` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
   `verify_code` varchar(64) DEFAULT NULL,
-  `phone_number` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_ob8kqyqqgmefl0aco34akdtpe` (`email`),
   UNIQUE KEY `UK_sb8bbouer5wak8vyiiy4pf2bx` (`username`)
@@ -202,7 +264,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'2022-11-19 20:40:07','2022-11-19 20:40:28','dangtiendat86@gmail.com',NULL,'tiendat86','$2a$10$8deeZWrOdQ/NHVn0bOJ4/.rd3vwMceJXM6Pqra6392R/NaMAsY.uK','CUSTOMER','ACTIVE','tiendat86','VvA26QK1xETskQWkRqscCoohg8L5fnT5jhHUWMEm0XtL1TR1xz7Iy8JZVWIYIA84',NULL),(2,'2022-11-19 20:42:17','2022-11-19 20:42:17','admin@gmail.com',NULL,'admin','$2a$10$s19JnpQUcY78/bpw/jaCeuj4VonsEFxWOXuXw67sMm0l6FvnhQNxG','CUSTOMER|MANAGER','ACTIVE','admin','PNxYYd4eyugz3WMpH32FFh1YtBe642voLG8Ldghb1BwlZSCfWwRprUdmJmta5GRr',NULL),(3,'2022-11-19 20:42:51','2022-11-19 20:42:51','customer@gmail.com',NULL,'customer','$2a$10$1bwlUdVlAmehKxgR32yxvu0iEsvG1n/KykUFn5iXPp.oVVq2j.QX2','CUSTOMER','customer','customer','kXw4OhKkgF1Zw2QvciZ6dXq2px2d46zjKW5cmCbpuCxVsyL0ddDbwjWgwCsIp88m',NULL);
+INSERT INTO `user` VALUES (1,'2022-11-19 20:40:07','2022-11-19 20:40:28','dangtiendat86@gmail.com',NULL,'tiendat86','$2a$10$8deeZWrOdQ/NHVn0bOJ4/.rd3vwMceJXM6Pqra6392R/NaMAsY.uK','CUSTOMER','ACTIVE','tiendat86','VvA26QK1xETskQWkRqscCoohg8L5fnT5jhHUWMEm0XtL1TR1xz7Iy8JZVWIYIA84'),(2,'2022-11-19 20:42:17','2022-11-19 20:42:17','admin@gmail.com',NULL,'admin','$2a$10$s19JnpQUcY78/bpw/jaCeuj4VonsEFxWOXuXw67sMm0l6FvnhQNxG','CUSTOMER|MANAGER','ACTIVE','admin','PNxYYd4eyugz3WMpH32FFh1YtBe642voLG8Ldghb1BwlZSCfWwRprUdmJmta5GRr'),(3,'2022-11-19 20:42:51','2022-11-19 20:42:51','customer@gmail.com',NULL,'customer','$2a$10$1bwlUdVlAmehKxgR32yxvu0iEsvG1n/KykUFn5iXPp.oVVq2j.QX2','CUSTOMER','customer','customer','kXw4OhKkgF1Zw2QvciZ6dXq2px2d46zjKW5cmCbpuCxVsyL0ddDbwjWgwCsIp88m');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -215,4 +277,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-24 19:45:36
+-- Dump completed on 2022-11-26  9:36:36
