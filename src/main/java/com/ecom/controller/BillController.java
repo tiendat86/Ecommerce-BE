@@ -5,6 +5,7 @@ import com.ecom.entity.Bill;
 import com.ecom.service.BillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -24,10 +25,10 @@ public class BillController extends BaseController {
     @GetMapping("/user/pay_bill")
     public String paymentBill(HttpServletRequest request, @RequestParam("id") Long idBill,
                               @RequestParam("code") String bankCode) {
-        String responseUrl = getStringUrl(request) + "/user/bill/" + idBill + "/success";
+        String responseUrl = getStringUrl(request) + "/user/bill_success/" + idBill;
         try {
             return billService.paymentBill(request, getUser(), idBill,
-                    bankCode, responseUrl.replace("localhost", "tiendat86.com"));
+                    bankCode, responseUrl);
         } catch (Exception e) {
             return "payment_fail";
         }
@@ -38,7 +39,7 @@ public class BillController extends BaseController {
         return siteUrl.replace(request.getServletPath(), "");
     }
 
-    @GetMapping("/user/bill/{id}/success")
+    @GetMapping("/user/bill_success/{id}")
     public String responsePayment(@PathVariable("id") Long idBill) {
         return billService.paymentSuccess(idBill);
     }

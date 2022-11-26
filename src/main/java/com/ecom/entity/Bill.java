@@ -1,16 +1,15 @@
 package com.ecom.entity;
 
 import com.ecom.enumuration.EBillStatus;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Table
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Bill extends BaseEntity {

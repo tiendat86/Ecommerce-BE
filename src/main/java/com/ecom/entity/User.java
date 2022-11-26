@@ -2,20 +2,17 @@ package com.ecom.entity;
 
 import com.ecom.enumuration.EUserStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Table
-@Data
+@Table(name = "user_info")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class User extends BaseEntity {
     @Column(unique = true, name = "username")
     private String username;
