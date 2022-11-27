@@ -2,3 +2,5 @@ create image: docker build --tag=configservice:0.0.1
 run container: docker run -p 8888:8080 -d configservice:0.0.1
 
 flyn: flyctl launch --image configservice:0.0.1
+
+git heroku: $ git push heroku main

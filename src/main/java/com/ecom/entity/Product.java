@@ -1,6 +1,7 @@
 package com.ecom.entity;
 
 import com.ecom.enumuration.ETypeProduct;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -27,7 +28,6 @@ public class Product extends BaseEntity {
     private int inventoryNumber;
     @Column(name = "image_url")
     private String imageUrl;
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id")
     private Brand brand;

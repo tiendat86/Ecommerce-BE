@@ -9,11 +9,13 @@ import com.ecom.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
@@ -27,7 +29,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Brand> getAll() {
-        return brandRepository.findAll();
+        List<Brand> brands = brandRepository.findAll();
+        return brands;
     }
 
     @Override
