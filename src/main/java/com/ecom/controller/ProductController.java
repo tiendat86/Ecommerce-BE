@@ -25,7 +25,7 @@ public class ProductController extends BaseController {
         return productService.addBrand(brand);
     }
 
-    @GetMapping("brand/get_all")
+    @GetMapping(value = "brand/get_all", produces = "application/json")
     public List<Brand> getAllBrand() {
         return productService.getAll();
     }
