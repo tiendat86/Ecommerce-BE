@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `ecom` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `ecom`;
 -- MySQL dump 10.13  Distrib 8.0.31, for macos12 (x86_64)
 --
 -- Host: 127.0.0.1    Database: ecom
@@ -67,7 +65,7 @@ CREATE TABLE `bill` (
   PRIMARY KEY (`id`),
   KEY `FKqhq5aolak9ku5x5mx11cpjad9` (`user_id`),
   CONSTRAINT `FKqhq5aolak9ku5x5mx11cpjad9` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,7 +74,7 @@ CREATE TABLE `bill` (
 
 LOCK TABLES `bill` WRITE;
 /*!40000 ALTER TABLE `bill` DISABLE KEYS */;
-INSERT INTO `bill` VALUES (3,'2022-11-21 17:25:25','2022-11-21 17:25:25',61670000,2,'UNPAYMENT');
+INSERT INTO `bill` VALUES (3,'2022-11-21 17:25:25','2022-11-21 17:25:25',61670000,2,'UNPAYMENT'),(4,'2022-11-26 16:10:29','2022-11-26 16:41:26',136950000,2,'PAYMENT');
 /*!40000 ALTER TABLE `bill` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -220,7 +218,7 @@ CREATE TABLE `product_in_cart` (
   CONSTRAINT `FKashwo2cx8wffg6hmidq95xcqx` FOREIGN KEY (`bill_id`) REFERENCES `bill` (`id`),
   CONSTRAINT `FKmbb9ii8dfmagbt971nh30ikcm` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`),
   CONSTRAINT `FKq5fiqoevrmlirjqjxs0kvlnqq` FOREIGN KEY (`cart_id`) REFERENCES `cart` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,7 +227,7 @@ CREATE TABLE `product_in_cart` (
 
 LOCK TABLES `product_in_cart` WRITE;
 /*!40000 ALTER TABLE `product_in_cart` DISABLE KEYS */;
-INSERT INTO `product_in_cart` VALUES (4,'2022-11-20 00:28:41','2022-11-21 17:25:25',1,2,1,3),(5,'2022-11-20 00:29:12','2022-11-20 00:29:12',1,1,1,NULL),(6,'2022-11-21 14:11:11','2022-11-21 17:25:25',2,2,3,3),(7,'2022-11-21 14:20:03','2022-11-21 14:20:16',2,2,4,NULL);
+INSERT INTO `product_in_cart` VALUES (4,'2022-11-20 00:28:41','2022-11-21 17:25:25',1,2,1,3),(5,'2022-11-20 00:29:12','2022-11-20 00:29:12',1,1,1,NULL),(6,'2022-11-21 14:11:11','2022-11-21 17:25:25',2,2,3,3),(7,'2022-11-21 14:20:03','2022-11-26 16:10:29',2,2,4,4),(8,'2022-11-26 16:05:46','2022-11-26 16:10:29',3,2,3,4);
 /*!40000 ALTER TABLE `product_in_cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -255,7 +253,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_ob8kqyqqgmefl0aco34akdtpe` (`email`),
   UNIQUE KEY `UK_sb8bbouer5wak8vyiiy4pf2bx` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -264,7 +262,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'2022-11-19 20:40:07','2022-11-19 20:40:28','dangtiendat86@gmail.com',NULL,'tiendat86','$2a$10$8deeZWrOdQ/NHVn0bOJ4/.rd3vwMceJXM6Pqra6392R/NaMAsY.uK','CUSTOMER','ACTIVE','tiendat86','VvA26QK1xETskQWkRqscCoohg8L5fnT5jhHUWMEm0XtL1TR1xz7Iy8JZVWIYIA84'),(2,'2022-11-19 20:42:17','2022-11-19 20:42:17','admin@gmail.com',NULL,'admin','$2a$10$s19JnpQUcY78/bpw/jaCeuj4VonsEFxWOXuXw67sMm0l6FvnhQNxG','CUSTOMER|MANAGER','ACTIVE','admin','PNxYYd4eyugz3WMpH32FFh1YtBe642voLG8Ldghb1BwlZSCfWwRprUdmJmta5GRr'),(3,'2022-11-19 20:42:51','2022-11-19 20:42:51','customer@gmail.com',NULL,'customer','$2a$10$1bwlUdVlAmehKxgR32yxvu0iEsvG1n/KykUFn5iXPp.oVVq2j.QX2','CUSTOMER','customer','customer','kXw4OhKkgF1Zw2QvciZ6dXq2px2d46zjKW5cmCbpuCxVsyL0ddDbwjWgwCsIp88m');
+INSERT INTO `user` VALUES (1,'2022-11-19 20:40:07','2022-11-19 20:40:28','dangtiendat86@gmail.com',NULL,'tiendat86','$2a$10$8deeZWrOdQ/NHVn0bOJ4/.rd3vwMceJXM6Pqra6392R/NaMAsY.uK','CUSTOMER','ACTIVE','tiendat86','VvA26QK1xETskQWkRqscCoohg8L5fnT5jhHUWMEm0XtL1TR1xz7Iy8JZVWIYIA84'),(2,'2022-11-19 20:42:17','2022-11-26 15:56:57','admin@gmail.com','http://res.cloudinary.com/dmiqsmeab/image/upload/v1669453016/2_admin_avatar.jpg','admin','$2a$10$s19JnpQUcY78/bpw/jaCeuj4VonsEFxWOXuXw67sMm0l6FvnhQNxG','CUSTOMER|MANAGER','ACTIVE','admin','PNxYYd4eyugz3WMpH32FFh1YtBe642voLG8Ldghb1BwlZSCfWwRprUdmJmta5GRr'),(3,'2022-11-19 20:42:51','2022-11-19 20:42:51','customer@gmail.com',NULL,'customer','$2a$10$1bwlUdVlAmehKxgR32yxvu0iEsvG1n/KykUFn5iXPp.oVVq2j.QX2','CUSTOMER','customer','customer','kXw4OhKkgF1Zw2QvciZ6dXq2px2d46zjKW5cmCbpuCxVsyL0ddDbwjWgwCsIp88m'),(7,'2022-11-26 16:15:03','2022-11-26 16:15:03','dudu1892000@gmail.com',NULL,'Dương XL','$2a$10$PQlinlG8hLK6z9FhxkmHjeHil4lNF0v5AdlxL27KfZW5Q/vO/YDeO','CUSTOMER','PENDING','dudu1892000','zQ2ZGaj7DorV6luTpLUYOBB0sLM00enZWWy6Dbyn00UFaL2ipuJ8KrF1xH6bmeLz');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -277,4 +275,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-26  9:36:36
+-- Dump completed on 2022-12-21 17:26:07
