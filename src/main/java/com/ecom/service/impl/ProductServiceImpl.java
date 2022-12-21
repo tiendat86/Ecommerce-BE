@@ -2,6 +2,7 @@ package com.ecom.service.impl;
 
 import com.ecom.entity.Brand;
 import com.ecom.entity.Product;
+import com.ecom.exception.UploadFileErrorException;
 import com.ecom.repository.BrandRepository;
 import com.ecom.repository.ProductRepository;
 import com.ecom.service.CloudinaryService;
@@ -9,9 +10,9 @@ import com.ecom.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -39,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product addProduct(MultipartFile image, Product product) {
+    public Product addProduct(MultipartFile image, Product product) throws UploadFileErrorException {
         if (!checkValidProduct(product))
             return null;
         Product saveProduct = productRepository.save(product);
@@ -69,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product changeImageProduct(MultipartFile file, Long idProduct) {
+    public Product changeImageProduct(MultipartFile file, Long idProduct) throws UploadFileErrorException {
         Product product = productRepository.findProductById(idProduct);
         if (product == null) return null;
         String fileName = product.getId() + "_product_" + product.getName();

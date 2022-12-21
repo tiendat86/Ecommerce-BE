@@ -1,12 +1,15 @@
 package com.ecom.controller;
 
-import com.ecom.entity.Brand;
-import com.ecom.entity.Product;
-import com.ecom.entity.ProductInCart;
-import com.ecom.entity.User;
+import com.ecom.dto.ResponseDTO;
+import com.ecom.entity.*;
+import com.ecom.exception.CannotFoundItemException;
+import com.ecom.exception.UploadFileErrorException;
+import com.ecom.exception.UserNotFoundException;
 import com.ecom.service.BuyProductService;
 import com.ecom.service.ProductService;
+import com.twilio.http.Response;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,39 +22,58 @@ public class ProductController extends BaseController {
     private final BuyProductService buyProductService;
 
     @GetMapping("brand/create")
-    public Brand createBrand(@RequestParam String name) {
+    public ResponseDTO<Brand> createBrand(@RequestParam String name) {
         Brand brand = new Brand();
         brand.setName(name);
-        return productService.addBrand(brand);
+        return ResponseDTO.successResponse(productService.addBrand(brand));
     }
 
     @GetMapping(value = "brand/get_all", produces = "application/json")
-    public List<Brand> getAllBrand() {
-        return productService.getAll();
+    public ResponseDTO<List<Brand>> getAllBrand() {
+        return ResponseDTO.successResponse(productService.getAll());
     }
 
     @PostMapping("product/create")
-    public Product createProduct(@RequestPart MultipartFile image, @RequestPart Product product) {
-        return productService.addProduct(image, product);
+    public ResponseDTO<Product> createProduct(@RequestPart MultipartFile image, @RequestPart Product product) {
+        try {
+            return ResponseDTO.successResponse(productService.addProduct(image, product));
+        } catch (UploadFileErrorException e) {
+            return ResponseDTO.failedResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("product/find/brand/{idBrand}")
-    public List<Product> findProductByBrand(@PathVariable Long idBrand) {
-        return productService.findProductByBrand(idBrand);
+    public ResponseDTO<List<Product>> findProductByBrand(@PathVariable Long idBrand) {
+        return ResponseDTO.successResponse(productService.findProductByBrand(idBrand));
     }
 
     @PostMapping("product/change_image/{id}")
-    public Product changeImageProduct(@RequestPart MultipartFile file, @PathVariable("id") Long idProduct) {
-        return productService.changeImageProduct(file, idProduct);
+    public ResponseDTO<Product> changeImageProduct(@RequestPart MultipartFile file, @PathVariable("id") Long idProduct) {
+        try {
+            return ResponseDTO.successResponse(productService.changeImageProduct(file, idProduct));
+        } catch (UploadFileErrorException e) {
+            return ResponseDTO.failedResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("user/add/product")
-    public String addProductInCart(@RequestParam Long productId, @RequestParam int quantity) {
-        return buyProductService.addProductInCart(productId, quantity, getUser());
+    public ResponseDTO<Cart> addProductInCart(@RequestParam Long productId, @RequestParam int quantity) {
+        try {
+            Cart cart = buyProductService.addProductInCart(productId, quantity, getUser());
+            return ResponseDTO.successResponse(cart);
+        } catch (UserNotFoundException e) {
+            return ResponseDTO.failedResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (CannotFoundItemException e) {
+            return ResponseDTO.failedResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("user/get_cart")
-    public List<ProductInCart> getProductInCart() {
-        return buyProductService.getProductInCartByUser(getUser());
+    public ResponseDTO<List<ProductInCart>> getProductInCart() {
+        try {
+            return ResponseDTO.successResponse(buyProductService.getProductInCartByUser(getUser()));
+        } catch (UserNotFoundException e) {
+            return ResponseDTO.failedResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
     }
 }

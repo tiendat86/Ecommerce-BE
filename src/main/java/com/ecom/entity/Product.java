@@ -31,7 +31,7 @@ public class Product extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id")
     private Brand brand;
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
-    Collection<ProductInCart> productInCart;
+//    @JsonIgnore
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+//    Collection<ProductInCart> productInCart;
 }

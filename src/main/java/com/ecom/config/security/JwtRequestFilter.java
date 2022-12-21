@@ -31,11 +31,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = request.getHeader("Authorization");
         String username = null;
+
+        // get validation from header
         if (!StringUtils.isBlank(jwt) && jwt.startsWith("Bearer")) {
             jwt = jwt.substring(7);
             username = jwtUtil.extractUsername(jwt);
         }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.loadUserByUsername(username);
             if (jwtUtil.validateToken(jwt, userDetails) &&

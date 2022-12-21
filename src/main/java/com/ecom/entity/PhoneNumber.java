@@ -20,7 +20,6 @@ public class PhoneNumber extends BaseEntity {
     @Column(name = "phone_status")
     @Enumerated(EnumType.STRING)
     private EUserStatus phoneStatus;
-
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

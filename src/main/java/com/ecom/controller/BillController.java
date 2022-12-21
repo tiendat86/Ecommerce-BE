@@ -1,11 +1,14 @@
 package com.ecom.controller;
 
+import com.ecom.dto.ResponseDTO;
 import com.ecom.dto.request.CreateBillRequest;
 import com.ecom.entity.Bill;
+import com.ecom.exception.CannotFoundItemException;
+import com.ecom.exception.UserNotFoundException;
 import com.ecom.service.BillService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -18,19 +21,33 @@ public class BillController extends BaseController {
     private final BillService billService;
 
     @PostMapping("/user/bill/create")
-    public Bill createBill(@RequestBody CreateBillRequest request) {
-        return billService.createBill(request, getUser());
+    public ResponseDTO<Bill> createBill(@RequestBody CreateBillRequest request) {
+        Bill bill;
+        try {
+            bill = billService.createBill(request, getUser());
+        } catch (UserNotFoundException e) {
+            return ResponseDTO.failedResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (CannotFoundItemException e) {
+            return ResponseDTO.failedResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return ResponseDTO.successResponse(bill);
     }
 
     @GetMapping("/user/pay_bill")
-    public String paymentBill(HttpServletRequest request, @RequestParam("id") Long idBill,
-                              @RequestParam("code") String bankCode) {
+    public ResponseDTO<String> paymentBill(HttpServletRequest request, @RequestParam("id") Long idBill,
+                                           @RequestParam("code") String bankCode) {
         String responseUrl = getStringUrl(request) + "/user/bill_success/" + idBill;
+
         try {
-            return billService.paymentBill(request, getUser(), idBill,
+            String urlPayment = billService.paymentBill(request, getUser(), idBill,
                     bankCode, responseUrl);
-        } catch (Exception e) {
-            return "payment_fail";
+            return ResponseDTO.successResponse(urlPayment);
+        } catch (UserNotFoundException e) {
+            return ResponseDTO.failedResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (CannotFoundItemException e) {
+            return ResponseDTO.failedResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException | InvalidKeyException e) {
+            return ResponseDTO.failedResponse("Payment to vnpay something wrong, please wait to fix!", HttpStatus.BAD_REQUEST);
         }
     }
 

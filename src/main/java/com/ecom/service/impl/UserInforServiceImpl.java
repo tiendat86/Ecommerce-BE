@@ -6,6 +6,7 @@ import com.ecom.entity.Address;
 import com.ecom.entity.PhoneNumber;
 import com.ecom.entity.User;
 import com.ecom.enumuration.EUserStatus;
+import com.ecom.exception.CannotFoundItemException;
 import com.ecom.repository.AddressRepository;
 import com.ecom.repository.PhoneRepository;
 import com.ecom.service.TwilioService;
@@ -17,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserInforServiceImpl implements UserInforService {
     private final AddressRepository addressRepository;
     private final PhoneRepository phoneRepository;
@@ -32,18 +35,17 @@ public class UserInforServiceImpl implements UserInforService {
 
     @Override
     public Address createNewAddressForUser(Address address, User user) {
-        if (user == null)
-            return null;
         address.setUser(user);
         return addressRepository.save(address);
     }
 
     @Override
-    public Boolean deleteAddress(Long idAddress) {
+    public String deleteAddress(Long idAddress, User user) throws CannotFoundItemException {
         Address address = addressRepository.findAllById(idAddress);
-        if (address == null) return false;
+        if (address == null || !address.getUser().getUsername().equals(user.getUsername()))
+            throw new CannotFoundItemException("Can't not find address in user!");
         addressRepository.deleteById(idAddress);
-        return true;
+        return "Successful";
     }
 
     @Override
@@ -80,11 +82,12 @@ public class UserInforServiceImpl implements UserInforService {
     public Boolean verifyPhoneNumber(Long idPhoneNumber, String verifyCode, User user) {
         Boolean res;
         PhoneNumber phoneNumber = phoneRepository.findAllById(idPhoneNumber);
-        if (user == null || phoneNumber.getUser().getId() != user.getId())
-            return true;
+        if (phoneNumber.getUser().getId() != user.getId())
+            return false;
+
         long expiration = 10 * 60 * 1000;
         long updateMilitime = Timestamp.valueOf(phoneNumber.getUpdatedAt()).getTime();
-        if (System.currentTimeMillis() - updateMilitime > expiration) {
+        if (System.currentTimeMillis() - updateMilitime > expiration || !phoneNumber.getVerifyCode().equals(verifyCode)) {
             phoneNumber.setVerifyCode(RandomStringUtils.randomAlphanumeric(6));
             res = false;
         } else {
@@ -96,12 +99,12 @@ public class UserInforServiceImpl implements UserInforService {
     }
 
     @Override
-    public Boolean deletePhoneNumber(Long idPhoneNumber) {
+    public String deletePhoneNumber(Long idPhoneNumber, User user) throws CannotFoundItemException {
         PhoneNumber phoneNumber = phoneRepository.findAllById(idPhoneNumber);
-        if (phoneNumber == null)
-            return false;
+        if (phoneNumber == null || !phoneNumber.getUser().getUsername().equals(user.getUsername()))
+            throw new CannotFoundItemException("Can't not find phone number");
         phoneRepository.deleteById(idPhoneNumber);
-        return true;
+        return "Success delete phone: " + phoneNumber.getPhone();
     }
 
     @Override

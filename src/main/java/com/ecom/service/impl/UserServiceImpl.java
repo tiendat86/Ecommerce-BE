@@ -6,6 +6,9 @@ import com.ecom.entity.Cart;
 import com.ecom.entity.User;
 import com.ecom.enumuration.EUserRole;
 import com.ecom.enumuration.EUserStatus;
+import com.ecom.exception.CannotFoundItemException;
+import com.ecom.exception.ItemIsExistException;
+import com.ecom.exception.UploadFileErrorException;
 import com.ecom.repository.CartRepository;
 import com.ecom.repository.UserRepository;
 import com.ecom.service.CloudinaryService;
@@ -28,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -36,6 +40,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
@@ -45,19 +50,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final JwtUtil jwtUtil;
     private final CloudinaryService cloudinaryService;
 
-    @SneakyThrows
     @Override
-    public String signUp(User user, String siteUrl) {
+    public String signUp(User user, String siteUrl) throws ItemIsExistException, MessagingException, UnsupportedEncodingException {
         if(checkIfUsernameOrEmailExist(user.getUsername(), user.getEmail())) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setVerifyCode(generateRandomVerifyCode());
-            user.setUserStatus(EUserStatus.PENDING);
-            user.setRole(EUserRole.CUSTOMER.name());
-            userRepository.save(user);
-            sendVerificationEmail(user, siteUrl);
-            return "Register success, please check email to verify!";
+            throw new ItemIsExistException("Username or email is register");
         }
-        return "Username or email is register";
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setVerifyCode(generateRandomVerifyCode());
+        user.setUserStatus(EUserStatus.PENDING);
+        user.setRole(EUserRole.CUSTOMER.name());
+        userRepository.save(user);
+        sendVerificationEmail(user, siteUrl);
+        return "Register success, please check email to verify!";
     }
 
     private void sendVerificationEmail(User user, String siteUrl) throws MessagingException, UnsupportedEncodingException {
@@ -88,7 +92,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private boolean checkIfUsernameOrEmailExist(String username, String email) {
         List<User> users = userRepository.findByUsernameOrEmail(username, email);
-        return users.size() == 0;
+        return users.size() > 0;
     }
 
     @Override
@@ -96,18 +100,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = userRepository.findByVerifyCode(code);
         long expiration = 30 * 60 * 1000;
         if (user == null || !user.getVerifyCode().equals(code))
-            return "verify_fail";
+            return "Can't not verify because code is diffirent";
         long updateMilitime = Timestamp.valueOf(user.getUpdatedAt()).getTime();
         if (System.currentTimeMillis() - updateMilitime > expiration) {
             user.setVerifyCode(generateRandomVerifyCode());
             user.setUserStatus(EUserStatus.INACTIVE);
             userRepository.save(user);
-            return "verify_expired";
+            return "Can't not verify because code is expired, please send another email";
         }
         user.setUserStatus(EUserStatus.ACTIVE);
         createCartForUser(user);
         userRepository.save(user);
-        return "verify_success";
+        return "Verify success";
     }
 
     private void createCartForUser(User user) {
@@ -121,7 +125,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public String signIn(LoginForm form) {
+    public String signIn(LoginForm form) throws UsernameNotFoundException {
         User user = getUserByUsername(form.getUsername());
         if (user == null || !passwordEncoder.matches(form.getPassword(), user.getPassword()))
             throw new UsernameNotFoundException("Error username or password!");
@@ -143,18 +147,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User addRoleForUser(RoleToUser roleToUser) {
+    public User addRoleForUser(RoleToUser roleToUser) throws CannotFoundItemException, ItemIsExistException {
         User user = findUserById(roleToUser.getIdUser());
         String role = roleToUser.getRole();
         if (user == null || role == null)
-            return null;
+            throw new CannotFoundItemException("Can't find user or role in db");
         String userRole = user.getRole();
         if (userRole.indexOf(role) == -1) {
             userRole = userRole + "|" + role;
             user.setRole(userRole);
             return userRepository.save(user);
         }
-        return null;
+        throw new ItemIsExistException("User has been role!");
     }
 
     private User findUserById(Long userId) {
@@ -175,9 +179,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public String changeAvatar(MultipartFile fileImg, User user) {
-        if (user == null)
-            return "Login to use function";
+    public String changeAvatar(MultipartFile fileImg, User user) throws UploadFileErrorException {
         String nameFile = generateFilename(user.getId(), user.getUsername());
         String urlImage = cloudinaryService.uploadFile(fileImg, nameFile);
         if (!StringUtils.isBlank(urlImage)) {

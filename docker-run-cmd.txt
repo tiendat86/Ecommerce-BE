@@ -1,5 +1,5 @@
-create image: docker build --tag=configservice:0.0.1
-run container: docker run -p 8888:8080 -d configservice:0.0.1
+create image: docker build --tag=dangtiendat86/ecommerce-server:lastest .
+run container: docker run -p 8888:8080 -d dangtiendat86/ecommerce-server:latest
 
 flyn: flyctl launch --image configservice:0.0.1
 

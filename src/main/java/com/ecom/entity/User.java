@@ -31,13 +31,12 @@ public class User extends BaseEntity {
     private String imageUrl;
     private String role;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    private Cart cart;
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private Collection<Bill> bills;
-    @JsonIgnore
+//    @JsonIgnore
+//    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+//    private Cart cart;
+//    @JsonIgnore
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+//    private Collection<Bill> bills;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Collection<Address> addresses;
     @JsonIgnore

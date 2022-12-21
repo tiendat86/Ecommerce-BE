@@ -6,17 +6,17 @@ import com.ecom.entity.Bill;
 import com.ecom.entity.ProductInCart;
 import com.ecom.entity.User;
 import com.ecom.enumuration.EBillStatus;
+import com.ecom.exception.CannotFoundItemException;
 import com.ecom.repository.BillRepository;
 import com.ecom.repository.ProductInCartRepository;
 import com.ecom.service.BillService;
 import com.ecom.util.IPForRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -33,11 +33,9 @@ public class BillServiceImpl implements BillService {
     private final ProductInCartRepository productInCartRepository;
     private final IPForRequest ipForRequest;
 
-    @SneakyThrows
     @Override
-    public Bill createBill(CreateBillRequest createBillRequest, User user) {
-        if (user == null)
-            return null;
+    public Bill createBill(CreateBillRequest createBillRequest, User user) throws CannotFoundItemException {
+
         Bill bill = new Bill();
         double total = 0d;
         List<ProductInCart> products = new ArrayList<>();
@@ -45,7 +43,7 @@ public class BillServiceImpl implements BillService {
             Optional<ProductInCart> optionalProduct = productInCartRepository.findById(id);
             if (optionalProduct.isEmpty() || optionalProduct.get().getCart().getUser().getId() != user.getId()
                 || optionalProduct.get().getBill() != null)
-                throw new Exception("Product is not valid!");
+                throw new CannotFoundItemException("Can't not find product");
             ProductInCart product = optionalProduct.get();
             total += product.getQuantity() * product.getProduct().getPrice();
             products.add(product);
@@ -55,6 +53,7 @@ public class BillServiceImpl implements BillService {
         bill.setUser(user);
         bill.setStatus(EBillStatus.UNPAYMENT);
         Bill saveBill = billRepository.save(bill);
+
         updateProductInCart(saveBill);
         return saveBill;
     }
@@ -68,10 +67,10 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public String paymentBill(HttpServletRequest request, User user, Long idBill, String bankCode, String responseUrl) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
+    public String paymentBill(HttpServletRequest request, User user, Long idBill, String bankCode, String responseUrl) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, CannotFoundItemException {
         Bill bill = billRepository.findBillById(idBill);
-        if (user == null || bill == null || bill.getUser().getId() != user.getId())
-            return null;
+        if (bill == null || bill.getUser().getId() != user.getId())
+            throw new CannotFoundItemException("Can't find info bill or user and bill can matched!");
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));

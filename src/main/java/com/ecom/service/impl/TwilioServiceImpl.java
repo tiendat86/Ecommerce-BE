@@ -7,7 +7,10 @@ import com.twilio.type.PhoneNumber;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class TwilioServiceImpl implements TwilioService {
     @Value("${twilio.accound.sid}")
     private String accoundSid;

@@ -1,6 +1,7 @@
 package com.ecom.service.impl;
 
 import com.cloudinary.Cloudinary;
+import com.ecom.exception.UploadFileErrorException;
 import com.ecom.service.CloudinaryService;
 import com.ecom.util.HashingAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CloudinaryServiceImpl implements CloudinaryService {
     private final Cloudinary cloudinary;
     @Value("${cloudinary.api.key}")
@@ -25,7 +28,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     private final HashingAlgorithm hashingAlgorithm;
 
     @Override
-    public String uploadFile(MultipartFile fileImg, String filename) {
+    public String uploadFile(MultipartFile fileImg, String filename) throws UploadFileErrorException {
         try {
             File file = convertMultipartFileToFile(fileImg);
             String signature = generateSignature(filename);
@@ -34,7 +37,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             String url = (String) returnValue.get("url");
             return url;
         } catch (IOException e) {
-            return "Error to read file, please retry!";
+            throw new UploadFileErrorException("Error to read file, please retry!");
         }
     }
 
